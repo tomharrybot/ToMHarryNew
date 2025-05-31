@@ -5,7 +5,7 @@ const path = require('path');
 
 module.exports = {
   config: {
-    name: "media",
+    name: "amir",
     version: "1.0.3",
     hasPermssion: 0,
     credits: "AMIR",
