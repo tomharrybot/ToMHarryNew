@@ -116,7 +116,7 @@
     "websocket-stream": "^5.5.2",
     "wikijs": "^6.3.3",
     "youtube-downloader-cc-api": "^1.0.4",
-    "youtube-search-api": "^1.1.0",
+    "youtube-search-api": "^1.2.2",
     "youtubei.js": "^1.4.5",
     "yt-search": "^2.13.1",
     "ytdl-core": "^4.11.2",
