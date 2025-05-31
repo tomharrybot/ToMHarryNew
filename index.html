@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Start Bot</title>
+</head>
+<body>
+  <h1>Start Bot on Vercel</h1>
+  <button onclick="startBot()">Start Now</button>
+
+  <script>
+    async function startBot() {
+      const res = await fetch("/api/start");
+      const msg = await res.text();
+      alert(msg);
+    }
+  </script>
+</body>
+</html>

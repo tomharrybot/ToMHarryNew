@@ -1,0 +1,13 @@
+modules = ["nodejs-20", "web"]
+run = "npm run"
+
+[nix]
+channel = "stable-24_05"
+packages = ["unzipNLS"]
+
+[deployment]
+run = ["sh", "-c", "npm run"]
+
+[[ports]]
+localPort = 8080
+externalPort = 80
