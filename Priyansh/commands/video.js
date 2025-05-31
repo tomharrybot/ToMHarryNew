@@ -1,14 +1,14 @@
-const axios = require("axios");
-const fs = require("fs");
-const path = require("path");
-const ytSearch = require("yt-search");
+const youtube = require('youtube-search-api');
+const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = {
   config: {
     name: "video",
     version: "1.0.0",
     hasPermssion: 0,
-    credits: "𝐏𝐫𝐢𝐲𝐚𝐧𝐬𝐡 𝐑𝐚𝐣𝐩𝐮𝐭",
+    credits: "AMIR",
     description: "Download YouTube content as video",
     commandCategory: "Media",
     usages: "[videoTitle/artist]",
@@ -19,80 +19,90 @@ module.exports = {
     },
   },
 
-  run: async function ({ api, event, args }) {
-    if (!args.length) {
-      return api.sendMessage("╭═══🅥🅘🅓🅔🅞═══❤╮\n⏤͟͟͞͞◯⬳  😘😘 ᴵᵀˢ ᴹᴱ ˢᴴᴼᴺᴬ ᯤᯱᯱᯱᯱᯱᯱᯱ ᯤᯱᯱᯱ\n   ᶜᴿᴱᴬᵀᴱᴰ ᵇʸ  𓆩♥︎🅐ᴍɪʀ😍𓆪\nᴘʟᴇᴀsᴇ ᴛʏᴘᴇ ᴠɪᴅᴇᴏ ɴᴀᴍᴇ...\n╰❤═════════════╯", event.threadID, event.messageID);
-    }
+module.exports.run = async ({ api, event }) => {
+    const input = event.body;
+    const text = input.substring(7).trim();
 
-    const contentName = args.join(" ");
-    const processingMessage = await api.sendMessage(
-      "╭═══🅥🅘🅓🅔🅞═══❤╮\n⏤͟͟͞͞◯⬳  😘😘 ᴵᵀˢ ᴹᴱ ˢᴴᴼᴺᴬ ᯤᯱᯱᯱᯱᯱᯱᯱ ᯤᯱᯱᯱ\n   ᶜᴿᴱᴬᵀᴱᴰ ᵇʸ  𓆩♥︎🅐ᴍɪʀ😍𓆪\n🅢ᴇᴀʀᴄʜɪɴɢ ᴠɪᴅᴇᴏ...\n╰❤═════════════╯",
-      event.threadID,
-      null,
-      event.messageID
-    );
+    if (!text) {
+        return api.sendMessage("⚠️ Please provide a title or name of the video.", event.threadID);
+    }
 
     try {
-      const searchResults = await ytSearch(contentName);
-      if (!searchResults || !searchResults.videos.length) {
-        throw new Error("No results found for your search query.");
-      }
+        api.sendMessage(`🔎 Searching for "${text}"...`, event.threadID, event.messageID);
+        api.setMessageReaction("🔍", event.messageID, (err) => {}, true);
 
-      const topResult = searchResults.videos[0];
-      const videoId = topResult.videoId;
+        // Search YouTube for the video
+        const result = await youtube.GetListByKeyword(text, false, 1);
+        if (!result.items || result.items.length === 0) {
+            return api.sendMessage('⚠️ No results found for your search query.', event.threadID);
+        }
 
-      const apiKey = "priyansh-here";
-      const apiUrl = `https://priyansh-ai.onrender.com/youtube?id=${videoId}&type=video&apikey=${apiKey}`;
+        const video = result.items[0];
+        const videoUrl = `https://www.youtube.com/watch?v=${video.id}`;
 
-      api.setMessageReaction("⌛", event.messageID, () => {}, true);
+        // Fetch video info from the new API
+        const apiUrl = `http://152.42.220.111:25753/ytmp4?url=${encodeURIComponent(videoUrl)}`;
+        const response = await axios.get(apiUrl, { timeout: 10000 });
 
-      const downloadResponse = await axios.get(apiUrl);
-      const downloadUrl = downloadResponse.data.downloadUrl;
+        if (!response.data || !response.data.success || !response.data.download || !response.data.download.url) {
+            return api.sendMessage('⚠️ Could not retrieve video information from the server.', event.threadID);
+        }
 
-      const safeTitle = topResult.title.replace(/[^a-zA-Z0-9 \-_]/g, "");
-      const filename = `${safeTitle}.mp4`;
-      const downloadPath = path.join(__dirname, "cache", filename);
+        const { title, thumbnail } = response.data.metadata;
+        const downloadUrl = response.data.download.url;
+        const quality = response.data.download.quality;
+        const duration = response.data.metadata.duration.timestamp;
+        const views = response.data.metadata.views.toLocaleString();
+        const author = response.data.metadata.author.name;
 
-      if (!fs.existsSync(path.dirname(downloadPath))) {
-        fs.mkdirSync(path.dirname(downloadPath), { recursive: true });
-      }
+        // Sanitize filename
+        const sanitizedTitle = title.replace(/[^\w\s]/gi, '').substring(0, 50);
+        const filePath = path.join(__dirname, 'cache', `${sanitizedTitle}.mp4`);
+        const writer = fs.createWriteStream(filePath);
 
-      const response = await axios({
-        url: downloadUrl,
-        method: "GET",
-        responseType: "stream",
-      });
+        try {
+            const videoResponse = await axios({
+                url: downloadUrl,
+                method: 'GET',
+                responseType: 'stream',
+                timeout: 60000
+            });
 
-      const fileStream = fs.createWriteStream(downloadPath);
-      response.data.pipe(fileStream);
+            videoResponse.data.pipe(writer);
 
-      await new Promise((resolve, reject) => {
-        fileStream.on("finish", resolve);
-        fileStream.on("error", reject);
-      });
+            await new Promise((resolve, reject) => {
+                writer.on('finish', resolve);
+                writer.on('error', reject);
+            });
 
-      api.setMessageReaction("✅", event.messageID, () => {}, true);
+            // Send the video
+            await api.sendMessage({
+                body: `🎥 Here's your video:\n\n` +
+                      `📛 Title: ${title}\n` +
+                      `👤 Author: ${author}\n` +
+                      `⏱️ Duration: ${duration}\n` +
+                      `👀 Views: ${views}\n` +
+                      `🖼️ Thumbnail: ${thumbnail}\n` +
+                      `📡 Quality: ${quality}`,
+                attachment: fs.createReadStream(filePath)
+            }, event.threadID);
 
-      await api.sendMessage(
-        {
-          attachment: fs.createReadStream(downloadPath),
-          body: `╭═══🅥🅘🅓🅔🅞═══❤╮\n⏤͟͟͞͞◯⬳  😘😘 ᴵᵀˢ ᴹᴱ ˢᴴᴼᴺᴬ ᯤᯱᯱᯱᯱᯱᯱᯱ ᯤᯱᯱᯱ\n   ᶜᴿᴱᴬᵀᴱᴰ ᵇʸ  𓆩♥︎🅐ᴍɪʀ😍𓆪\nʜᴇʀᴇ ɪs ʏᴏᴜʀ ᴠɪᴅᴇᴏ ᴇɴᴊᴏʏ\n╰❤═════════════╯`,
-        },
-        event.threadID,
-        () => {
-          fs.unlinkSync(downloadPath);
-          api.unsendMessage(processingMessage.messageID);
-        },
-        event.messageID
-      );
+            api.setMessageReaction("✅", event.messageID, (err) => {}, true);
+        } catch (downloadError) {
+            console.error('Download error:', downloadError);
+            return api.sendMessage('❌ Failed to download the video. Please try again later.', event.threadID);
+        } finally {
+            // Clean up the file
+            if (fs.existsSync(filePath)) {
+                fs.unlink(filePath, (err) => {
+                    if (err) console.error('Error deleting file:', err);
+                });
+            }
+        }
+
     } catch (error) {
-      console.error(`Failed to download video: ${error.message}`);
-      api.sendMessage(
-        `❌ Failed to download video: ${error.message}`,
-        event.threadID,
-        event.messageID
-      );
-      api.unsendMessage(processingMessage.messageID);
+        console.error('Error:', error);
+        api.setMessageReaction("❌", event.messageID, (err) => {}, true);
+        api.sendMessage("❌ An error occurred while processing your request. Please try again later.", event.threadID);
     }
-  },
 };
