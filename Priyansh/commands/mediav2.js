@@ -3,7 +3,21 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-
+module.exports = {
+  config: {
+    name: "media",
+    version: "1.0.3",
+    hasPermssion: 0,
+    credits: "AMIR",
+    description: "Download YouTube content as audio or video",
+    commandCategory: "Media",
+    usages: "[audio/video] [contentName]",
+    cooldowns: 5,
+    dependencies: {
+      "node-fetch": "",
+      "yt-search": "",
+    },
+  },
 
 module.exports.run = async ({ api, event }) => {
     const input = event.body.slice(6).trim(); // Remove 'media '
