@@ -1,114 +1,95 @@
-const youtube = require('youtube-search-api');
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
-
-module.exports = {
-  config: {
-    name: "music",
-    version: "1.0.0",
-    hasPermssion: 0,
-    credits: "AMIR",
-    description: "Download YouTube content as audio",
-    commandCategory: "Media",
-    usages: "[songName/artist]",
-    cooldowns: 5,
-    dependencies: {
-      "node-fetch": "",
-      "yt-search": "",
-    },
-  },
+module.exports.config = {
+  name: "music",
+  version: "2.0.4",
+  hasPermssion: 0,
+  credits: "𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙",
+  description: "Play music",
+  prefix: true,
+  usePrefix: true,
+  commandCategory: "utility",
+  usages: "music [your music title]",
+  cooldowns: 5,
+  dependencies: {
+    "fs-extra": "",
+    "request": "",
+    "axios": "",
+    "@distube/ytdl-core": "",
+    "yt-search": ""
+  }
+};
 
 module.exports.run = async ({ api, event }) => {
-    const input = event.body;
-    const text = input.substring(7).trim();
+  const axios = require("axios");
+  const fs = require("fs-extra");
+  const ytdl = require("@distube/ytdl-core");
+  const request = require("request");
+  const yts = require("yt-search");
 
-    if (!text) {
-        return api.sendMessage("⚠️ Please provide a song title or artist name.", event.threadID);
+  const input = event.body;
+  const text = input.substring(12);
+  const data = input.split(" ");
+
+  if (data.length < 2) {
+    return api.sendMessage(`「 🎵 𝗠𝘂𝘀𝗶𝗰 🎵 」
+
+𝐏𝐥𝐞𝐚𝐬𝐞 𝐄𝐧𝐭𝐞𝐫 𝐒𝐨𝐧𝐠 𝐍𝐚𝐌𝐞...`, event.threadID);
+  }
+
+  data.shift();
+  const song = data.join(" ");
+
+  try {
+    api.sendMessage(`‎「 🎵 𝗣𝗿𝗼𝗰𝗲𝘀𝘀𝗶𝗻𝗴 🎵 」
+
+𝐏𝐥𝐞𝐚𝐬𝐞 𝐖𝐚𝐢𝐓 𝐒𝐨𝐌𝐞 𝐒𝐞𝐜𝐨𝐧𝐝𝐬..`, event.threadID);
+
+    const res = await axios.get(`https://amir-all-in-1-apis-12bp.onrender.com/api/search/youtube?query=${encodeURIComponent(song)}`);
+
+    const searchResults = await yts(song);
+    if (!searchResults.videos.length) {
+      return api.sendMessage("Error: Invalid request.", event.threadID, event.messageID);
     }
 
-    try {
-        api.sendMessage(`🔎 Searching for "${text}"...`, event.threadID, event.messageID);
-        api.setMessageReaction("🔍", event.messageID, (err) => {}, true);
+    const video = searchResults.videos[0];
+    const videoUrl = video.url;
 
-        // Search YouTube for the video
-        const result = await youtube.GetListByKeyword(text, false, 1);
-        if (!result.items || result.items.length === 0) {
-            return api.sendMessage('⚠️ No results found for your query.', event.threadID);
-        }
+    const stream = ytdl(videoUrl, { filter: "audioonly" });
 
-        const video = result.items[0];
-        const videoUrl = `https://www.youtube.com/watch?v=${video.id}`;
+    const fileName = `${event.senderID}.mp3`;
+    const filePath = __dirname + `/cache/${fileName}`;
 
-        // Using the specified API endpoint
-        const apiUrl = `http://152.42.220.111:25753/ytmp3?url=${encodeURIComponent(videoUrl)}`;
+    stream.pipe(fs.createWriteStream(filePath));
 
-        const response = await axios.get(apiUrl, {
-            timeout: 30000 // 30 seconds timeout
-        });
+    stream.on('response', () => {
+      console.info('[DOWNLOADER]', 'Starting download now!');
+    });
 
-        if (!response.data || !response.data.success || !response.data.download?.url) {
-            return api.sendMessage('⚠️ Could not retrieve music download link.', event.threadID);
-        }
+    stream.on('info', (info) => {
+      console.info('[DOWNLOADER]', `Downloading ${info.videoDetails.title} by ${info.videoDetails.author.name}`);
+    });
 
-        const { download, metadata } = response.data;
-        const { title, thumbnail, author } = metadata;
-        const sanitizedTitle = title.replace(/[^\w\s]/gi, ''); // Remove special characters for filename
+    stream.on('end', () => {
+      console.info('[DOWNLOADER] Downloaded');
 
-        // Create cache directory if it doesn't exist
-        const cacheDir = path.join(__dirname, 'cache');
-        if (!fs.existsSync(cacheDir)) {
-            fs.mkdirSync(cacheDir);
-        }
+      if (fs.statSync(filePath).size > 26214400) {
+        fs.unlinkSync(filePath);
+        return api.sendMessage('⚠ | ERROR The file could not be sent because it is larger than 25MB.', event.threadID);
+      }
 
-        const filePath = path.join(cacheDir, `${sanitizedTitle}.mp3`);
+      const message = {
+        body: `‎「 🎵 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗱 🎵 」
 
-        // Download the file with progress
-        api.sendMessage(`⬇️ Downloading: ${title}\n🎤 Artist: ${author.name}\n⏳ Duration: ${metadata.duration.timestamp}`, event.threadID);
+𝐇𝐞𝐫𝐞 𝐢𝐬 𝐘𝐨𝐮𝐫 𝐌𝐮𝐬𝐢𝐜 𝐄𝐧𝐉𝐨𝐲.💙
+𝗖𝗿𝗲𝗱𝗶𝘁𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙`,
+        attachment: fs.createReadStream(filePath)
+      };
 
-        const writer = fs.createWriteStream(filePath);
-        const downloadResponse = await axios({
-            url: download.url,
-            method: 'GET',
-            responseType: 'stream',
-            timeout: 120000 // 2 minutes timeout for larger files
-        });
-
-        downloadResponse.data.pipe(writer);
-
-        await new Promise((resolve, reject) => {
-            writer.on('finish', resolve);
-            writer.on('error', reject);
-        });
-
-        // Send the music file
-        const message = {
-            body: `🎵 Now Playing: ${title}\n\n` +
-                  `🎤 Artist: ${author.name}\n` +
-                  `⏱️ Duration: ${metadata.duration.timestamp}\n` +
-                  `🔊 Quality: ${download.quality}\n\n` +
-                  `Enjoy your music! 🎧`,
-            attachment: fs.createReadStream(filePath)
-        };
-
-        api.setMessageReaction("🎵", event.messageID, (err) => {}, true);
-        await api.sendMessage(message, event.threadID);
-
-        // Clean up the file after sending
-        fs.unlink(filePath, (err) => {
-            if (err) console.error('Error deleting file:', err);
-        });
-
-    } catch (error) {
-        console.error('Error:', error);
-        api.setMessageReaction("❌", event.messageID, (err) => {}, true);
-
-        if (error.code === 'ECONNABORTED') {
-            api.sendMessage("❌ Request timed out. Please try again.", event.threadID);
-        } else if (error.response?.status === 404) {
-            api.sendMessage("❌ Music not found or download service unavailable.", event.threadID);
-        } else {
-            api.sendMessage("❌ An error occurred while processing your request.", event.threadID);
-        }
-    }
+      api.sendMessage(message, event.threadID, () => {
+        fs.unlinkSync(filePath);
+      });
+    });
+  } catch (error) {
+    console.error('[ERROR]', error);
+    api.sendMessage('An error occurred while processing the command.', event.threadID);
+  }
 };
