@@ -4,7 +4,7 @@ const ytdl = require('@distube/ytdl-core');
 const ytSearch = require('yt-search'); // Import yt-search
 
 module.exports.config = {
-    name: "jordan",
+    name: "amir",
     version: "1.0.0",
     hasPermission: 0,
     credits: "AMIR",
