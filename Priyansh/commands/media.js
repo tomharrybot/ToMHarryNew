@@ -1,104 +1,124 @@
-const axios = require("axios");
-const fs = require("fs");
-const path = require("path");
-const ytSearch = require("yt-search");
+module.exports.config = {
+  name: "media",
+  version: "2.0.5",
+  hasPermssion: 0,
+  credits: "𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙",
+  description: "Play music/video using API",
+  prefix: true,
+  usePrefix: true,
+  commandCategory: "utility",
+  usages: "music [video/audio] [your title]",
+  cooldowns: 5,
+  dependencies: {
+    "fs-extra": "",
+    "axios": ""
+  }
+};
 
-module.exports = {
-  config: {
-    name: "media",
-    version: "1.0.3",
-    hasPermssion: 0,
-    credits: "𝐏𝐫𝐢𝐲𝐚𝐧𝐬𝐡 𝐑𝐚𝐣𝐩𝐮𝐭",
-    description: "Download YouTube content as audio or video",
-    commandCategory: "Media",
-    usages: "[audio/video] [contentName]",
-    cooldowns: 5,
-    dependencies: {
-      "node-fetch": "",
-      "yt-search": "",
-    },
-  },
+module.exports.run = async ({ api, event, args }) => {
+  const axios = require("axios");
+  const fs = require("fs-extra");
 
-  run: async function ({ api, event, args }) {
-    if (args.length < 2) {
-      return api.sendMessage("╭═══🅜🅔🅓🅘🅐═══❤╮\n⏤͟͟͞͞◯⬳  😘😘 ᴵᵀˢ ᴹᴱ ˢᴴᴼᴺᴬ ᯤᯱᯱᯱᯱᯱᯱᯱ ᯤᯱᯱᯱ\n   ᶜᴿᴱᴬᵀᴱᴰ ᵇʸ  𓆩♥︎🅐ᴍɪʀ😍𓆪\n❌ ɪɴᴠᴀʟɪᴅ ᴜsᴇ : ᴍᴇᴅɪᴀ ᴀᴜᴅɪᴏ/ᴠɪᴅᴇᴏ (sᴏɴɢ ɴᴀᴍᴇ)✦\n╰❤═════════════╯", event.threadID, event.messageID);
+  // Check if user wants video or audio
+  const type = args[0]?.toLowerCase();
+  if (!type || (type !== 'video' && type !== 'audio')) {
+    return api.sendMessage(`「 🎵 𝗠𝘂𝘀𝗶𝗰/𝗩𝗶𝗱𝗲𝗼 🎵 」
+
+Usage: 
+${global.config.PREFIX}music audio [song name] - for audio download
+${global.config.PREFIX}music video [song name] - for video download
+
+Example:
+${global.config.PREFIX}music audio kahani suno
+${global.config.PREFIX}music video kahani suno`, event.threadID);
+  }
+
+  const query = args.slice(1).join(" ");
+  if (!query) {
+    return api.sendMessage(`「 🎵 𝗠𝘂𝘀𝗶𝗰/𝗩𝗶𝗱𝗲𝗼 🎵 」
+
+Please enter a search query...`, event.threadID);
+  }
+
+  try {
+    api.sendMessage(`‎「 🎵 𝗣𝗿𝗼𝗰𝗲𝘀𝘀𝗶𝗻𝗴 🎵 」
+
+Searching for "${query}"...`, event.threadID);
+
+    // First API for searching
+    const searchUrl = `https://koja-api.web-server.xyz/youtube-search?query=${encodeURIComponent(query)}`;
+    const searchResponse = await axios.get(searchUrl);
+    
+    if (!searchResponse.data.success || !searchResponse.data.result.video.length) {
+      return api.sendMessage("No results found for your search query.", event.threadID);
     }
 
-    const type = args[0].toLowerCase();
-    const contentName = args.slice(1).join(" ");
+    const videos = searchResponse.data.result.video;
+    const firstVideo = videos[0];
+    const videoUrl = firstVideo.url;
 
-    if (type !== "audio" && type !== "video") {
-      return api.sendMessage("╭═══🅜🅔🅓🅘🅐═══❤╮\n⏤͟͟͞͞◯⬳  😘😘 ᴵᵀˢ ᴹᴱ ˢᴴᴼᴺᴬ ᯤᯱᯱᯱᯱᯱᯱᯱ ᯤᯱᯱᯱ\n   ᶜᴿᴱᴬᵀᴱᴰ ᵇʸ  𓆩♥︎🅐ᴍɪʀ😍𓆪\n❌ ɪɴᴠᴀʟɪᴅ ᴜsᴇ : ᴍᴇᴅɪᴀ ᴀᴜᴅɪᴏ/ᴠɪᴅᴇᴏ (sᴏɴɢ ɴᴀᴍᴇ)✦\n╰❤═════════════╯", event.threadID, event.messageID);
+    api.sendMessage(`‎「 🎵 𝗙𝗼𝘂𝗻𝗱 🎵 」
+
+Title: ${firstVideo.title}
+Artist: ${firstVideo.authorName}
+Duration: ${firstVideo.duration}
+
+Downloading ${type}...`, event.threadID);
+
+    // Determine the appropriate API endpoint based on type
+    const downloadEndpoint = type === 'video' ? 'ytmp4' : 'ytmp3';
+    const downloadUrl = `https://koja-api.web-server.xyz/${downloadEndpoint}?url=${encodeURIComponent(videoUrl)}`;
+    
+    const downloadResponse = await axios.get(downloadUrl, { responseType: 'json' });
+
+    if (!downloadResponse.data.success || !downloadResponse.data.download?.url) {
+      return api.sendMessage(`Error: Could not get ${type} download URL from API.`, event.threadID);
     }
 
-    const processingMessage = await api.sendMessage(
-      "╭═══🅜🅔🅓🅘🅐═══❤╮\n⏤͟͟͞͞◯⬳  😘😘 ᴵᵀˢ ᴹᴱ ˢᴴᴼᴺᴬ ᯤᯱᯱᯱᯱᯱᯱᯱ ᯤᯱᯱᯱ\n   ᶜᴿᴱᴬᵀᴱᴰ ᵇʸ  𓆩♥︎🅐ᴍɪʀ😍𓆪\n🅢ᴇᴀʀᴄʜɪɴɢ...\n╰❤═════════════╯",
-      event.threadID,
-      null,
-      event.messageID
-    );
+    const mediaUrl = downloadResponse.data.download.url;
+    const fileExt = type === 'video' ? 'mp4' : 'mp3';
+    const fileName = `${event.senderID}.${fileExt}`;
+    const filePath = __dirname + `/cache/${fileName}`;
 
-    try {
-      const searchResults = await ytSearch(contentName);
-      if (!searchResults || !searchResults.videos.length) {
-        throw new Error("No results found for your search query.");
-      }
+    // Download the file
+    const mediaResponse = await axios({
+      method: 'get',
+      url: mediaUrl,
+      responseType: 'stream'
+    });
 
-      const topResult = searchResults.videos[0];
-      const videoId = topResult.videoId;
+    const writer = fs.createWriteStream(filePath);
+    mediaResponse.data.pipe(writer);
 
-      const apiKey = "priyansh-here";
-      const apiUrl = `https://priyansh-ai.onrender.com/youtube?id=${videoId}&type=${type}&apikey=${apiKey}`;
+    return new Promise((resolve, reject) => {
+      writer.on('finish', () => {
+        const message = {
+          body: `‎「 🎵 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗱 🎵 」
 
-      api.setMessageReaction("⌛", event.messageID, () => {}, true);
+Here is your ${type}!
+Title: ${firstVideo.title}
+Artist: ${firstVideo.authorName}
+Duration: ${firstVideo.duration}
 
-      const downloadResponse = await axios.get(apiUrl);
-      const downloadUrl = downloadResponse.data.downloadUrl;
+Credits: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙`,
+          attachment: fs.createReadStream(filePath)
+        };
 
-      const safeTitle = topResult.title.replace(/[^a-zA-Z0-9 \-_]/g, "");
-      const filename = `${safeTitle}.${type === "audio" ? "mp3" : "mp4"}`;
-      const downloadPath = path.join(__dirname, "cache", filename);
-
-      if (!fs.existsSync(path.dirname(downloadPath))) {
-        fs.mkdirSync(path.dirname(downloadPath), { recursive: true });
-      }
-
-      const response = await axios({
-        url: downloadUrl,
-        method: "GET",
-        responseType: "stream",
+        api.sendMessage(message, event.threadID, () => {
+          fs.unlinkSync(filePath);
+          resolve();
+        });
       });
 
-      const fileStream = fs.createWriteStream(downloadPath);
-      response.data.pipe(fileStream);
-
-      await new Promise((resolve, reject) => {
-        fileStream.on("finish", resolve);
-        fileStream.on("error", reject);
+      writer.on('error', (error) => {
+        console.error(`[${type.toUpperCase()} DOWNLOAD ERROR]`, error);
+        api.sendMessage(`Error downloading the ${type} file.`, event.threadID);
+        reject(error);
       });
+    });
 
-      api.setMessageReaction("✅", event.messageID, () => {}, true);
-
-      await api.sendMessage(
-        {
-          attachment: fs.createReadStream(downloadPath),
-          body: `🎬 Title: ${topResult.title}\n🕒 Duration: ${topResult.duration.timestamp}\n👀 Views: ${topResult.views}\n\nHere is your ${type === "audio" ? "🎧 audio" : "📹 video"} file:`,
-        },
-        event.threadID,
-        () => {
-          fs.unlinkSync(downloadPath);
-          api.unsendMessage(processingMessage.messageID);
-        },
-        event.messageID
-      );
-    } catch (error) {
-      console.error(`Failed to download and send content: ${error.message}`);
-      api.sendMessage(
-        `❌ Failed to download content: ${error.message}`,
-        event.threadID,
-        event.messageID
-      );
-      api.unsendMessage(processingMessage.messageID);
-    }
-  },
+  } catch (error) {
+    console.error('[ERROR]', error);
+    api.sendMessage(`An error occurred while processing the ${type} command: ${error.message}`, event.threadID);
+  }
 };
