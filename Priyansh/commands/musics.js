@@ -3,7 +3,7 @@ module.exports.config = {
   version: "2.0.4",
   hasPermssion: 0,
   credits: "𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙",
-  description: "Play music",
+  description: "Play music using API",
   prefix: true,
   usePrefix: true,
   commandCategory: "utility",
@@ -11,19 +11,13 @@ module.exports.config = {
   cooldowns: 5,
   dependencies: {
     "fs-extra": "",
-    "request": "",
-    "axios": "",
-    "@distube/ytdl-core": "",
-    "yt-search": ""
+    "axios": ""
   }
 };
 
 module.exports.run = async ({ api, event }) => {
   const axios = require("axios");
   const fs = require("fs-extra");
-  const ytdl = require("@distube/ytdl-core");
-  const request = require("request");
-  const yts = require("yt-search");
 
   const input = event.body;
   const text = input.substring(12);
@@ -41,55 +35,79 @@ module.exports.run = async ({ api, event }) => {
   try {
     api.sendMessage(`‎「 🎵 𝗣𝗿𝗼𝗰𝗲𝘀𝘀𝗶𝗻𝗴 🎵 」
 
-𝐏𝐥𝐞𝐚𝐬𝐞 𝐖𝐚𝐢𝐓 𝐒𝐨𝐌𝐞 𝐒𝐞𝐜𝐨𝐧𝐝𝐬..`, event.threadID);
+𝐒𝐞𝐚𝐫𝐜𝐡𝐢𝐧𝐠 𝐟𝐨𝐫 "${song}"...`, event.threadID);
 
-    const res = await axios.get(`https://amir-all-in-1-apis-12bp.onrender.com/api/search/youtube?query=${encodeURIComponent(song)}`);
-
-    const searchResults = await yts(song);
-    if (!searchResults.videos.length) {
-      return api.sendMessage("Error: Invalid request.", event.threadID, event.messageID);
+    // First API for searching
+    const searchUrl = `https://koja-api.web-server.xyz/youtube-search?query=${encodeURIComponent(song)}`;
+    const searchResponse = await axios.get(searchUrl);
+    
+    if (!searchResponse.data.success || !searchResponse.data.result.video.length) {
+      return api.sendMessage("No results found for your search query.", event.threadID);
     }
 
-    const video = searchResults.videos[0];
-    const videoUrl = video.url;
+    const videos = searchResponse.data.result.video;
+    const firstVideo = videos[0];
+    const videoUrl = firstVideo.url;
 
-    const stream = ytdl(videoUrl, { filter: "audioonly" });
+    api.sendMessage(`‎「 🎵 𝗙𝗼𝘂𝗻𝗱 🎵 」
 
+𝐓𝐢𝐭𝐥𝐞: ${firstVideo.title}
+𝐀𝐫𝐭𝐢𝐬𝐭: ${firstVideo.authorName}
+𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧: ${firstVideo.duration}
+
+𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐢𝐧𝐠...`, event.threadID);
+
+    // Second API for downloading
+    const downloadUrl = `https://koja-api.web-server.xyz/ytmp3?url=${encodeURIComponent(videoUrl)}`;
+    const downloadResponse = await axios.get(downloadUrl, { responseType: 'json' });
+
+    if (!downloadResponse.data.success || !downloadResponse.data.download?.url) {
+      return api.sendMessage("Error: Could not get download URL from API.", event.threadID);
+    }
+
+    const audioUrl = downloadResponse.data.download.url;
     const fileName = `${event.senderID}.mp3`;
     const filePath = __dirname + `/cache/${fileName}`;
 
-    stream.pipe(fs.createWriteStream(filePath));
-
-    stream.on('response', () => {
-      console.info('[DOWNLOADER]', 'Starting download now!');
+    // Download the audio file
+    const audioResponse = await axios({
+      method: 'get',
+      url: audioUrl,
+      responseType: 'stream'
     });
 
-    stream.on('info', (info) => {
-      console.info('[DOWNLOADER]', `Downloading ${info.videoDetails.title} by ${info.videoDetails.author.name}`);
-    });
+    const writer = fs.createWriteStream(filePath);
+    audioResponse.data.pipe(writer);
 
-    stream.on('end', () => {
-      console.info('[DOWNLOADER] Downloaded');
+    return new Promise((resolve, reject) => {
+      writer.on('finish', () => {
+        const message = {
+          body: `‎「 🎵 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗱 🎵 」
 
-      if (fs.statSync(filePath).size > 26214400) {
-        fs.unlinkSync(filePath);
-        return api.sendMessage('⚠ | ERROR The file could not be sent because it is larger than 25MB.', event.threadID);
-      }
+𝐇𝐞𝐫𝐞 𝐢𝐬 𝐘𝐨𝐮𝐫 𝐌𝐮𝐬𝐢𝐜 𝐄𝐧𝐣𝐨𝐲! 💙
+𝗧𝗶𝘁𝗹𝗲: ${firstVideo.title}
+𝗔𝗿𝘁𝗶𝘀𝘁: ${firstVideo.authorName}
+𝗗𝘂𝗿𝗮𝘁𝗶𝗼𝗻: ${firstVideo.duration}
 
-      const message = {
-        body: `‎「 🎵 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗱 🎵 」
-
-𝐇𝐞𝐫𝐞 𝐢𝐬 𝐘𝐨𝐮𝐫 𝐌𝐮𝐬𝐢𝐜 𝐄𝐧𝐉𝐨𝐲.💙
 𝗖𝗿𝗲𝗱𝗶𝘁𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙`,
-        attachment: fs.createReadStream(filePath)
-      };
+          attachment: fs.createReadStream(filePath)
+        };
 
-      api.sendMessage(message, event.threadID, () => {
-        fs.unlinkSync(filePath);
+        api.sendMessage(message, event.threadID, () => {
+          fs.unlinkSync(filePath);
+          resolve();
+        });
+      });
+
+      writer.on('error', (error) => {
+        console.error('[DOWNLOAD ERROR]', error);
+        api.sendMessage('Error downloading the audio file.', event.threadID);
+        reject(error);
       });
     });
+
   } catch (error) {
     console.error('[ERROR]', error);
-    api.sendMessage('An error occurred while processing the command.', event.threadID);
+    api.sendMessage('An error occurred while processing the command: ' + error.message, event.threadID);
   }
 };
