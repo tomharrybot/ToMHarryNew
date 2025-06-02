@@ -21,14 +21,19 @@ module.exports.run = async ({ api, event, args }) => {
 
   const query = args.join(" ");
   if (!query) {
-    return api.sendMessage(`「 🎥 𝗩𝗶𝗱𝗲𝗼 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗿 🎥 」
-
-Please enter a video title to search...
-Example: ${global.config.PREFIX}video kahani suno`, event.threadID);
+    return api.sendMessage(`❯❯❯⭑✦ 𝗩𝗶𝗱𝗲𝗼 𝗦𝗲𝗮𝗿𝗰𝗵 ✦⭑❮❮❮
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+🔍 ᴘʟᴇᴀsᴇ ᴇɴᴛᴇʀ sᴏɴɢ ɴᴀᴍᴇ
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+   𓆩𑁍𓆪𒄬𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙ ᭄࿐`, event.threadID);
   }
 
   try {
-    api.sendMessage(`🔍 Searching for "${query}"...`, event.threadID);
+    api.sendMessage(`❯❯❯⭑✦ 🔍 𝗦𝗲𝗮𝗿𝗰𝗵𝗶𝗻𝗴 ✦⭑❮❮❮
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+      ${query}
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+   𓆩𑁍𓆪𒄬𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙ ᭄࿐`, event.threadID);
 
     // First API for searching
     const searchUrl = `https://koja-api.web-server.xyz/youtube-search?query=${encodeURIComponent(query)}`;
@@ -42,12 +47,13 @@ Example: ${global.config.PREFIX}video kahani suno`, event.threadID);
     const firstVideo = videos[0];
     const videoUrl = firstVideo.url;
 
-    api.sendMessage(`🎬 Found Video:
-📌 Title: ${firstVideo.title}
-👤 Artist: ${firstVideo.authorName}
-⏱ Duration: ${firstVideo.duration}
-
-⬇️ Downloading video...`, event.threadID);
+    api.sendMessage(`❯❯❯⭑✦ ⬇️ 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗶𝗻𝗴 ✦⭑❮❮❮
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+𝐓𝐢𝐓𝐋𝐞: ${firstVideo.title}
+𝐀𝐫𝐭𝐢𝐬𝐭: ${firstVideo.authorName}
+𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧: ${firstVideo.duration}
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+   𓆩𑁍𓆪𒄬𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙ ᭄࿐`, event.threadID);
 
     // Video download API
     const downloadUrl = `https://koja-api.web-server.xyz/ytmp4?url=${encodeURIComponent(videoUrl)}`;
@@ -74,12 +80,13 @@ Example: ${global.config.PREFIX}video kahani suno`, event.threadID);
     return new Promise((resolve, reject) => {
       writer.on('finish', () => {
         const message = {
-          body: `✅ Video Downloaded Successfully!
-📛 Title: ${firstVideo.title}
-🎤 Artist: ${firstVideo.authorName}
-⌚ Duration: ${firstVideo.duration}
-
-Credits: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙`,
+          body: `❯❯❯⭑✦ ✅ 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗱 ✦⭑❮❮❮
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+𝐓𝐢𝐓𝐋𝐞: ${firstVideo.title}
+𝐀𝐫𝐭𝐢𝐬𝐭: ${firstVideo.authorName}
+𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧: ${firstVideo.duration}
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+   𓆩𑁍𓆪𒄬𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙ ᭄࿐`,
           attachment: fs.createReadStream(filePath)
         };
 
