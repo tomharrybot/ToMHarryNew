@@ -1,40 +1,44 @@
-const fs = require('fs-extra');
-const pathFile = __dirname + '/cache/autoseen.txt';
-if (!fs.existsSync(pathFile))
-  fs.writeFileSync(pathFile, 'false');
-  
 module.exports.config = {
-	name: "atoseen",
-	version: "1.0.0",
-	hasPermssion: 2,
-	credits: "JORDANOFFICIAL",
-	description: "",
-	commandCategory: "system",
-	usages: "on/off",
-	cooldowns: 5
+    name: "adminonly",
+    version: "1.0",
+    hasPermssion: 1,
+    credits: "ATF-TEAM",
+    description: "Admin only",
+    commandCategory: "Admin",
+    usages: "qtvonly",
+    cooldowns: 5,
+    dependencies: {
+        "fs-extra": ""
+    }
 };
 
-module.exports.handleEvent = async ({ api, event, args }) => {
-  const isEnable = fs.readFileSync(pathFile, 'utf-8');
-  if (isEnable == 'true')
-    api.markAsReadAll(() => {});
-};
+module.exports.onLoad = function() {
+    const { writeFileSync, existsSync } = require('fs-extra');
+    const { resolve } = require("path");
+    const path = resolve(__dirname, 'cache', 'data.json');
+    if (!existsSync(path)) {
+        const obj = {
+            adminbox: {}
+        };
+        writeFileSync(path, JSON.stringify(obj, null, 4));
+    } else {
+        const data = require(path);
+        if (!data.hasOwnProperty('adminbox')) data.adminbox = {};
+        writeFileSync(path, JSON.stringify(data, null, 4));
+    }
+}
+module.exports.run = async function ({ api, event, args }) {
+const { threadID, messageID, mentions } = event;
 
-module.exports. run = async ({ api, event, args }) => {
-  try {
-	if (args[0] == 'on') {
-	  fs.writeFileSync(pathFile, 'true');
-	  api.sendMessage('Turned On [ Auto Seen ] Mode - ✅', event.threadID, event.messageID);
-	}
-	else if (args[0] == 'off') {
-	  fs.writeFileSync(pathFile, 'false');
-	  api.sendMessage('Turned Off [ Auto Seen ] Mode - ⚠️', event.threadID, event.messageID);
-	}
-	else {
-	  api.sendMessage(`» Use : ${global.config.PREFIX}atoseen on / off - ⚠️`, event.threadID, event.messageID);
-	}
-  }
-  catch(e) {
-    console.log(e);
-  }
-};
+        const { resolve } = require("path");
+        const pathData = resolve(__dirname, 'cache', 'data.json');
+        const database = require(pathData);
+        const { adminbox } = database;   
+        if (adminbox[threadID] == true) {
+            adminbox[threadID] = false;
+            api.sendMessage("» Successfully disabled admin and only mode (everyone can use bots)", threadID, messageID);
+        } else {
+            adminbox[threadID] = true;
+            api.sendMessage("» Successfully enabled admin only mode (only admin with admin of group can use bot)", threadID, messageID);
+        }
+}
