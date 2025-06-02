@@ -1,8 +1,8 @@
 {
     "language": "en",
     "keyActive": "",
-    "DeveloperMode": false,
-    "autoCreateDB": true,
+    "DeveloperMode": true,
+    "autoCreateDB": false,
     "notiGroup": true,
     "NOTIFICATION": true,
     "allowInbox": true,
