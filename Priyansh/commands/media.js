@@ -22,28 +22,30 @@ module.exports.run = async ({ api, event, args }) => {
   // Check if user wants video or audio
   const type = args[0]?.toLowerCase();
   if (!type || (type !== 'video' && type !== 'audio')) {
-    return api.sendMessage(`「 🎵 𝗠𝘂𝘀𝗶𝗰/𝗩𝗶𝗱𝗲𝗼 🎵 」
-
-Usage: 
-${global.config.PREFIX}music audio [song name] - for audio download
-${global.config.PREFIX}music video [song name] - for video download
-
-Example:
-${global.config.PREFIX}music audio kahani suno
-${global.config.PREFIX}music video kahani suno`, event.threadID);
+    return api.sendMessage(`❯❯❯⭑✦ 𝗔𝘂𝗱𝗶𝗼 / 𝗩𝗶𝗱𝗲𝗼 ✦⭑❮❮❮
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+ ᴘʟᴇᴀsᴇ sᴇʟᴇᴄᴛ ᴀᴜᴅɪᴏ/ᴠɪᴅᴇᴏ
+ ᴇx: ᴍᴇᴅɪᴀ ᴀᴜᴅɪᴏ sᴏɴɢ ɴᴀᴍᴇ
+ ᴇx: ᴍᴇᴅɪᴀ ᴠɪᴅᴇᴏ sᴏɴɢ ɴᴀᴍᴇ
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+   𓆩𑁍𓆪𒄬𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙ ᭄࿐`, event.threadID);
   }
 
   const query = args.slice(1).join(" ");
   if (!query) {
-    return api.sendMessage(`「 🎵 𝗠𝘂𝘀𝗶𝗰/𝗩𝗶𝗱𝗲𝗼 🎵 」
-
-Please enter a search query...`, event.threadID);
+    return api.sendMessage(`❯❯❯⭑✦ 𝗠𝗲𝗱𝗶𝗮 𝗦𝗲𝗮𝗿𝗰𝗵 ✦⭑❮❮❮
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+🔍 ᴘʟᴇᴀsᴇ ᴇɴᴛᴇʀ sᴏɴɢ ɴᴀᴍᴇ
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+   𓆩𑁍𓆪𒄬𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙ ᭄࿐`, event.threadID);
   }
 
   try {
-    api.sendMessage(`‎「 🎵 𝗣𝗿𝗼𝗰𝗲𝘀𝘀𝗶𝗻𝗴 🎵 」
-
-Searching for "${query}"...`, event.threadID);
+    api.sendMessage(`‎❯❯❯⭑✦ 🔍 𝗦𝗲𝗮𝗿𝗰𝗵𝗶𝗻𝗴 ✦⭑❮❮❮
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+      ${query}
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+   𓆩𑁍𓆪𒄬𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙ ᭄࿐`, event.threadID);
 
     // First API for searching
     const searchUrl = `https://koja-api.web-server.xyz/youtube-search?query=${encodeURIComponent(query)}`;
@@ -57,13 +59,13 @@ Searching for "${query}"...`, event.threadID);
     const firstVideo = videos[0];
     const videoUrl = firstVideo.url;
 
-    api.sendMessage(`‎「 🎵 𝗙𝗼𝘂𝗻𝗱 🎵 」
-
-Title: ${firstVideo.title}
-Artist: ${firstVideo.authorName}
-Duration: ${firstVideo.duration}
-
-Downloading ${type}...`, event.threadID);
+    api.sendMessage(`‎❯❯❯⭑✦ ⬇️ 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗶𝗻𝗴 ✦⭑❮❮❮
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+𝐓𝐢𝐓𝐋𝐞: ${firstVideo.title}
+𝐀𝐫𝐭𝐢𝐬𝐭: ${firstVideo.authorName}
+𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧: ${firstVideo.duration}
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+   𓆩𑁍𓆪𒄬𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙ ᭄࿐`, event.threadID);
 
     // Determine the appropriate API endpoint based on type
     const downloadEndpoint = type === 'video' ? 'ytmp4' : 'ytmp3';
@@ -93,14 +95,13 @@ Downloading ${type}...`, event.threadID);
     return new Promise((resolve, reject) => {
       writer.on('finish', () => {
         const message = {
-          body: `‎「 🎵 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗱 🎵 」
-
-Here is your ${type}!
-Title: ${firstVideo.title}
-Artist: ${firstVideo.authorName}
-Duration: ${firstVideo.duration}
-
-Credits: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙`,
+          body: `‎❯❯❯⭑✦ ✅ 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗱 ✦⭑❮❮❮
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+𝐓𝐢𝐓𝐋𝐞: ${firstVideo.title}
+𝐀𝐫𝐭𝐢𝐬𝐭: ${firstVideo.authorName}
+𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧: ${firstVideo.duration}
+᯽ـــــــــــــــــــــــــــــــــــــــــــــــــــــــ᯽
+   𓆩𑁍𓆪𒄬𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙ ᭄࿐`,
           attachment: fs.createReadStream(filePath)
         };
 
