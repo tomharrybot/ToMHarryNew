@@ -36,8 +36,8 @@ module.exports.handleEvent = async ({ event, api, Users }) => {
     let moment = require("moment-timezone");
     let hours = moment.tz('Asia/karachi').format('HHmm');
     let data2 = [
-      "tốt lành",
-      "vui vẻ"
+      "Good",
+      "HaPPy"
     ];
     let text = data2[Math.floor(Math.random() * data2.length)]
     let session = (
@@ -49,14 +49,14 @@ module.exports.handleEvent = async ({ event, api, Users }) => {
     hours > 1701 && hours <= 1800 ? "Eve" : 
     hours > 1801 && hours <= 2100 ? "Night" : 
     hours > 2101 && hours <= 2400 ? "Night" : 
-    "lỗi");
+    "error");
     let name = await Users.getNameUser(event.senderID);
     let mentions = [];
     mentions.push({
       tag: name,
       id: event.senderID
     })
-    let msg = {body: `Hey\n${name}, Good_${session} ${text} ❤️\n➩Clock'Cheak : ${moment().tz("Asis/karachi").format("HH:mm:ss || DD/MMM/YYYY")}`, mentions}
+    let msg = {body: `Hey\n${name}, Good_${session} ${text} ❤️\n➩Clock'Check : ${moment().tz("Asis/karachi").format("hh:mm:ss || DD/MMM/YYYY")}`, mentions}
     api.sendMessage(msg, event.threadID, (e, info) => {
       setTimeout(() => {
         api.sendMessage({sticker: sticker}, event.threadID);
