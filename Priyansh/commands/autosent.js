@@ -1,111 +1,215 @@
 module.exports.config = {
-name: "autosent",
-version: "10.02",
-hasPermssion: 0,
-credits: "tromoxx",
-description: "After Set Bot send the message Every Gc.",
-commandCategory: "groups",
-usages: "[]",
-cooldowns: 3
+  name: "help2",
+  version: "1.0.2",
+  hasPermission: 0,
+  credits: "Mirai Team & Mod by Yan Maglinte",
+  description: "Beginner's Guide",
+  usePrefix: true,
+  commandCategory: "guide",
+  usages: "[Shows Commands]",
+  cooldowns: 5,
+  envConfig: {
+		autoUnsend: true,
+		delayUnsend: 60
+	}
 };
-const nam = [{
-timer: "12:00:00 AM",
-message: ['      『 ☆✦10:00:PM ✦☆ 』\nGood Night Everyone Its already 10 PM Have a Sweet Dreams 😴.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙'] ,
-},
-{
-timer: "1:00:00 AM",
-message: ['      『 ☆✦11:00:PM ✦☆ 』\nYou can love someone so much, but you can never love people as much as you can miss them 🙂💔.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙'] ,
-},
-{
-timer: '2:00:00 AM',
-message: ['      『 ☆✦12:00:AM ✦☆ 』\nWhen you are in love, and you get hurt, its like a cut — it will heal, but there will always be a scar 🙂💔.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙'] ,
-},
-{
-timer: '3:00:00 AM',
-message: ['      『 ☆✦1:00:AM ✦☆ 』\nSome people are going to leave, but thats not the end of your story. Thats the end of their part in your story 🙂💔.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙'] ,
-},
-{
-timer: '4:00:00 AM',
-message: ['      『 ☆✦2:00:AM ✦☆ 』\nEvery time your heart is broken, a doorway cracks open to a world full of new beginnings, new opportunities 🙂💔.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '5:00:00 AM',
-message: ['      『 ☆✦3:00:AM ✦☆ 』\nSadness flies away on the wings of time 💙.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '6:00:00 AM',
-message: ['      『 ☆✦4:00:AM ✦☆ 』\nAnd they cant understand, what hurts more — missing the other person, or pretending not to 😊💔.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '7:00:00 AM',
-message: ['      『 ☆✦5:00:AM ✦☆ 』\nIts Fajir Prayer TiMe, Everbody Go To Masjid 💙🧡.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '8:00:00 AM',
-message: ['      『 ☆✦6:00:AM ✦☆ 』\nSometimes I think it would be better if we died when they did, but we dont 🙂💔.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '9:00:00 AM',
-message: ['      『 ☆✦7:00:AM ✦☆ 』\nGood Morning 🌅 Everyone Have a Nice Day.\n 𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '10:00:00 AM',
-message: ['      『 ☆✦8:00:AM ✦☆ 』\nMy heart no longer felt as if it belonged to me. It now felt as if it had been stolen, torn from my chest by someone who wanted no part of it 🙂💔.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '11:00:00 AM',
-message: ['      『 ☆✦9:00:AM ✦☆ 』\nHave a Nice Day Dont Forget your BreakFasT 🥞.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '12:00:00 PM',
-message: ['      『 ☆✦10:00:AM ✦☆ 』\nA relationship, I think, is like a shark. You know? It has to constantly move forward or it dies. And I think what we got on our hands is a dead shark 🙂🧡.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '01:00:00 PM',
-message: ['      『 ☆✦11:00:AM ✦☆ 』\nI think heartbreak is something you learn to live with as opposed to learn to forget 🙂💔.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '2:00:00 PM',
-message: ['      『 ☆✦12:00:PM ✦☆ 』\nGood Afternoon Everyone 😊💙.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '3:00:00 PM',
-message: ['      『 ☆✦1:00:PM ✦☆ 』\nBack then, in those first days, I was so alone that every day was like eating my own heart 🙂.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '4:00:00 PM',
-message: ['      『 ☆✦2:00:PM ✦☆ 』\nThe broken heart. You think you will die, but you keep living, day after day after terrible day 🙂💙.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '5:00:00 PM',
-message: ['      『 ☆✦3:00:PM ✦☆ 』\nWhen your heart is broken, you plant seeds in the cracks and you pray for rain 🌧️. \n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '6:00:00 PM',
-message: ['      『 ☆✦4:00:PM ✦☆ 』\nLovers in love and the others run away. Lover is crying cause the other wont stay 😊💔.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '7:00:00 PM',
-message: ['      『 ☆✦5:00:PM ✦☆ 』\nGood Evening Everyone Enjoy yourself 💙.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '8:00:00 PM',
-message: ['      『 ☆✦6:00:PM ✦☆ 』\nWhen the evening falls, and I m left here with my thoughts and the image of you being with someone else, well its eating me up inside, but we ran our course. We pretended we are okay 🙂💔.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '9:00:00 PM',
-message: ['      『 ☆✦7:00:PM ✦☆ 』\nSometimes it lasts in love, but sometimes it hurts instead 👍💔.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '10:00:00 PM',
-message: ['      『 ☆✦8:00:PM ✦☆ 』\nThese wounds wont seem to heal, this pain is just too real 🙂💔.\n𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-},
-{
-timer: '11:00:00 PM',
-message: ['      『 ☆✦9:00:PM ✦☆ 』\nIn another life I would make you stay, so I dont have to say you were the one that got away 🙂💙.\n 𝗥𝗲𝗴𝗮𝗿𝗱𝘀: 𒄬• 𝐅𝐚𝐫𝐞𝐁𝐢𝐢𝐰 ː͢» ⸙']
-}];
-module.exports.onLoad = o => setInterval(() => {
-const r = a => a[Math.floor(Math.random()*a.length)];
-if (á = nam.find(i => i.timer == new Date(Date.now()+25200000).toLocaleString().split(/,/).pop().trim())) global.data.allThreadID.forEach(i => o.api.sendMessage(r(á.message), i));
-}, 1000);
-module.exports.run = o => {};
+
+module.exports.languages = {
+  en: {
+    moduleInfo:
+      "「 %1 」\n%2\n\n❯ Usage: %3\n❯ Category: %4\n❯ Waiting time: %5 seconds(s)\n❯ Permission: %6\n\n» Module code by %7 ",
+    helpList:
+      `◖There are %1 commands and %2 categories on this bot.`,
+    guideList:
+      `◖Use: "%1${this.config.name} ‹command›" to know how to use that command!\n◖Type: "%1${this.config.name} ‹page_number›" to show that page contents!`,
+    user: "User",
+    adminGroup: "Admin group",
+    adminBot: "Admin bot",
+  },
+};
+
+
+module.exports.handleEvent = function ({ api, event, getText }) {
+  const { commands } = global.client;
+  const { threadID, messageID, body } = event;  
+
+  if (!body || typeof body == "undefined" || body.indexOf("help") != 0)
+    return;
+  const splitBody = body.slice(body.indexOf("help")).trim().split(/\s+/);
+  if (splitBody.length == 1 || !commands.has(splitBody[1].toLowerCase())) return;
+  const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
+  const command = commands.get(splitBody[1].toLowerCase());
+  const prefix = threadSetting.hasOwnProperty("PREFIX")
+    ? threadSetting.PREFIX
+    : global.config.PREFIX;
+  return api.sendMessage(
+    getText(
+      "moduleInfo",
+      command.config.name,
+      command.config.description,
+      `${prefix}${command.config.name} ${
+        command.config.usages ? command.config.usages : ""
+      }`,
+      command.config.commandCategory,
+      command.config.cooldowns,
+      command.config.hasPermission === 0
+        ? getText("user")
+        : command.config.hasPermission === 1
+        ? getText("adminGroup")
+        : getText("adminBot"),
+      command.config.credits
+    ),
+    threadID,
+    messageID
+  );
+};
+
+module.exports.run = async function ({ api, event, args, getText }) {
+  const { commands } = global.client;
+  const { threadID, messageID } = event;
+  const command = commands.get((args[0] || "").toLowerCase());
+  const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
+  const { autoUnsend, delayUnsend } = global.configModule[this.config.name];
+  const prefix = threadSetting.hasOwnProperty("PREFIX")
+    ? threadSetting.PREFIX
+    : global.config.PREFIX;
+
+  if (!command) {
+    const commandList = Array.from(commands.values());
+    const categories = new Set(commandList.map((cmd) => cmd.config.commandCategory.toLowerCase()));
+    const categoryCount = categories.size;
+
+    const categoryNames = Array.from(categories);
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(categoryNames.length / itemsPerPage);
+
+    let currentPage = 1;
+    if (args[0]) {
+      const parsedPage = parseInt(args[0]);
+      if (
+        !isNaN(parsedPage) &&
+        parsedPage >= 1 &&
+        parsedPage <= totalPages
+      ) {
+        currentPage = parsedPage;
+      } else {
+        return api.sendMessage(
+          `◖Oops! You went too far! Please choose a page between 1 and ${totalPages}◗`,
+          threadID,
+          messageID
+        );
+      }
+    }
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const endIdx = startIdx + itemsPerPage;
+    const visibleCategories = categoryNames.slice(startIdx, endIdx);
+
+    let msg = "";
+    for (let i = 0; i < visibleCategories.length; i++) {
+      const category = visibleCategories[i];
+      const categoryCommands = commandList.filter(
+        (cmd) =>
+          cmd.config.commandCategory.toLowerCase() === category
+      );
+      const commandNames = categoryCommands.map((cmd) => cmd.config.name);
+      const numberFont = [
+        "❶",
+        "❷",
+        "❸",
+        "❹",
+        "❺",
+        "❻",
+        "❼",
+        "❽",
+        "❾",
+        "❿",
+      ];
+      msg += `╭[ ${numberFont[i]} ]─❍ ${
+        category.charAt(0).toUpperCase() + category.slice(1)
+      }\n╰─◗ ${commandNames.join(", ")}\n\n`;
+    }
+
+    const numberFontPage = [
+      "❶",
+      "❷",
+      "❸",
+      "❹",
+      "❺",
+      "❻",
+      "❼",
+      "❽",
+      "❾",
+      "❿",
+      "⓫",
+      "⓬",
+      "⓭",
+      "⓮",
+      "⓯",
+      "⓰",
+      "⓱",
+      "⓲",
+      "⓳",
+      "⓴",
+    ];
+    msg += `╭ ──────── ╮
+│ Page ${numberFontPage[currentPage - 1]} of ${
+      numberFontPage[totalPages - 1]
+    } │\n╰ ──────── ╯\n`;
+    msg += getText("helpList", commands.size, categoryCount, prefix);
+
+    const axios = require("axios");
+    const fs = require("fs-extra");
+    const imgP = [];
+    const img = [
+      "https://i.imgur.com/ruQ2pRn.jpg",
+      "https://i.imgur.com/HXHb0cB.jpg",
+      "https://i.imgur.com/ZJEI6KW.jpg",
+      "https://i.imgur.com/XGL57Wp.jpg",
+      "https://i.imgur.com/6OB00HJ.jpg",
+      "https://i.imgur.com/6vHaRZm.jpg",
+      "https://i.imgur.com/k6uE93k.jpg"
+    ];
+    const path = __dirname + "/cache/menu.png";
+    const rdimg = img[Math.floor(Math.random() * img.length)];
+
+    const { data } = await axios.get(rdimg, {
+      responseType: "arraybuffer",
+    });
+
+    fs.writeFileSync(path, Buffer.from(data, "utf-8"));
+    imgP.push(fs.createReadStream(path));
+    const config = require("./../../config.json")
+    const msgg = {
+  body: `╭──────────────╮\n│𝖢𝗈𝗆𝗆𝖺𝗇𝖽 & 𝖢𝖺𝗍𝖾𝗀𝗈𝗋𝗒│\n╰──────────────╯\n‣ Bot Owner: ${config.DESIGN.Admin}\n\n` + msg + `\n◖Total pages available: ${totalPages}.\n` + `\n╭ ──── ╮\n│ GUIDE │\n╰ ──── ╯\n` + getText("guideList", config.PREFIX),
+  attachment: imgP,
+};
+
+    const sentMessage = await api.sendMessage(msgg, threadID, messageID);
+
+    if (autoUnsend) {
+      setTimeout(async () => {
+        await api.unsendMessage(sentMessage.messageID);
+      }, delayUnsend * 1000);
+    }
+  } else {
+    return api.sendMessage(
+      getText(
+        "moduleInfo",
+        command.config.name,
+        command.config.description,
+        `${prefix}${command.config.name} ${
+          command.config.usages ? command.config.usages : ""
+        }`,
+        command.config.commandCategory,
+        command.config.cooldowns,
+        command.config.hasPermission === 0
+          ? getText("user")
+          : command.config.hasPermission === 1
+          ? getText("adminGroup")
+          : getText("adminBot"),
+        command.config.credits
+      ),
+      threadID, messageID
+    );
+  }
+};
